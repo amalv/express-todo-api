@@ -1,0 +1,5 @@
+# Dependency directories
+dist/
+node_modules/
+.env
+.vercel
