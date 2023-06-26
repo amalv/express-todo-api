@@ -8,12 +8,20 @@
     {
       "src": "api/hello.ts",
       "use": "@vercel/node"
+    },
+    {
+      "src": "api/todos.ts",
+      "use": "@vercel/node"
     }
   ],
   "routes": [
     {
       "src": "/api/hello",
       "dest": "api/hello.ts"
+    },
+    {
+      "src": "/api/todos",
+      "dest": "api/todos.ts"
     },
     {
       "src": "/",

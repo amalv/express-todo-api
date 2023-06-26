@@ -29,6 +29,7 @@ export default function (request: VercelRequest, response: VercelResponse) {
         <h1>Welcome to the API!</h1>
         <p>This is the index page for the API.</p>
         <p>Check out the <a href="/api/hello">Say hello to the API</a> endpoint!</p>
+        <p>Check out the <a href="/api/todos">todo list</a> endpoint!</p>
       </body>
     </html>
   `;
