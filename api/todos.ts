@@ -18,14 +18,64 @@ export default async function handler(
     if (request.method === "GET") {
       const result = await client.query("SELECT * FROM todos");
       const todos = result.rows;
+
       response.status(200).json(todos);
     } else if (request.method === "POST") {
       const { title, completed } = request.body;
-      await client.query(
-        "INSERT INTO todos (title, completed) VALUES ($1, $2)",
-        [title, completed]
+
+      if (!title) {
+        response.status(400).send("Title is required");
+        return;
+      }
+
+      const result = await client.query(
+        "INSERT INTO todos (title, completed) VALUES ($1, $2) RETURNING *",
+        [title, completed || false]
       );
-      response.status(201).send("Todo added successfully");
+      const todo = result.rows[0];
+
+      response.status(201).json(todo);
+    } else if (request.method === "DELETE") {
+      const { id } = request.query;
+
+      if (!id) {
+        response.status(400).send("ID is required");
+        return;
+      }
+
+      const result = await client.query(
+        "DELETE FROM todos WHERE id = $1 RETURNING *",
+        [id]
+      );
+      const todo = result.rows[0];
+
+      if (!todo) {
+        response.status(404).send("Todo not found");
+        return;
+      }
+
+      response.status(200).json(todo);
+    } else if (request.method === "PATCH") {
+      const { id } = request.query;
+      const { title, completed } = request.body;
+
+      if (!id) {
+        response.status(400).send("ID is required");
+        return;
+      }
+
+      const result = await client.query(
+        "UPDATE todos SET title = $1, completed = $2 WHERE id = $3 RETURNING *",
+        [title, completed, id]
+      );
+      const todo = result.rows[0];
+
+      if (!todo) {
+        response.status(404).send("Todo not found");
+        return;
+      }
+
+      response.status(200).json(todo);
     } else {
       response.status(405).send("Method not allowed");
     }

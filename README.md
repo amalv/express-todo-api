@@ -8,6 +8,12 @@ This is a simple API for managing todos. It uses a PostgreSQL database to store 
 
 Retrieves all todos from the database.
 
+Example request:
+
+```bash
+curl http://localhost:3000/api/todos
+```
+
 ### `POST /api/todos`
 
 Adds a new todo to the database.
@@ -18,7 +24,30 @@ Example request:
 curl -X POST \
   -H "Content-Type: application/json" \
   -d '{"title": "Buy groceries", "completed": false}' \
-  http://localhost:3000/todos
+  http://localhost:3000/api/todos
+```
+
+### `PATCH /api/todos`
+
+Updates a todo in the database.
+
+Example request:
+
+```bash
+curl -X PATCH \
+  -H "Content-Type: application/json" \
+  -d '{"title": "Buy milk", "completed": true}' \
+  http://localhost:3000/api/todos?id=1
+```
+
+### `DELETE /api/todos`
+
+Deletes a todo from the database.
+
+Example request:
+
+```bash
+curl -X DELETE http://localhost:3000/api/todos?id=1
 ```
 
 ## Setup
