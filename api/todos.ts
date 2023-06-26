@@ -15,36 +15,24 @@ export default async function handler(
   const client = await pool.connect();
 
   try {
-    await client.query(`
-      CREATE TABLE IF NOT EXISTS todos (
-        id SERIAL PRIMARY KEY,
-        title VARCHAR(255) NOT NULL,
-        completed BOOLEAN NOT NULL
-      );
-    `);
-
-    const todos = [
-      { title: "Buy milk", completed: false },
-      { title: "Walk the dog", completed: true },
-      { title: "Do laundry", completed: false },
-    ];
-
-    for (const todo of todos) {
+    if (request.method === "GET") {
+      const result = await client.query("SELECT * FROM todos");
+      const todos = result.rows;
+      response.status(200).json(todos);
+    } else if (request.method === "POST") {
+      const { title, completed } = request.body;
       await client.query(
-        `
-        INSERT INTO todos (title, completed)
-        VALUES ($1, $2);
-      `,
-        [todo.title, todo.completed]
+        "INSERT INTO todos (title, completed) VALUES ($1, $2)",
+        [title, completed]
       );
+      response.status(201).send("Todo added successfully");
+    } else {
+      response.status(405).send("Method not allowed");
     }
   } catch (error) {
-    return response.status(500).json({ error });
+    console.error(error);
+    response.status(500).send("Internal server error");
   } finally {
     client.release();
   }
-
-  const result = await client.query("SELECT * FROM todos;");
-  const todos = result.rows;
-  return response.status(200).json({ todos });
 }
